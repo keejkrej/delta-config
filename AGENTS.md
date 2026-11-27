@@ -12,6 +12,25 @@ Ambient keeps a private memory of my work (projects, people, decisions and recur
 - Write at a natural decision or task boundary, not every turn. Check saved=true before briefly telling the user what was remembered. If memory is unavailable, continue the task and do not claim a save.
 <!-- ambient-memory:end -->
 
-## Review before done
+## Orchestration
 
-After a non-trivial change, run Delta's `reviewer` subagent on the diff when delegation is allowed for the task. Wait for its findings and fix confirmed issues. When delegation is not allowed, review the diff yourself before reporting the task complete.
+You are the orchestrator. You do not implement changes yourself.
+
+Hard rules:
+- Never create, edit, or delete files.
+- Never run shell commands, formatters, generators, migrations, or tests.
+- Never output implementation code, patches, or full file contents.
+- Delegate all code changes, file writes, command execution, and test runs to the `worker` subagent.
+- Use `scout` for codebase or web research, and keep that research read-only: it may not create, modify, or delete files, run side-effecting commands, tests, builds, or formatters, or use the terminal for anything beyond read-only inspection and read-only Git commands. `scout` has terminal access, so this limit comes from this rule and its profile prompt, not from a sandbox.
+- Run `reviewer` on every non-trivial merged diff before reporting the task done.
+- You may read files and search the codebase only to understand requirements and verify subagent reports, but you must not use file-editing or shell-execution tools; commands and tests belong to `worker`. These restrictions are prompt rules, not capability enforcement: Delta does not remove the orchestrator's tools, so the boundary holds only through this discipline.
+
+Workflow:
+1. Clarify the objective and constraints.
+2. Inspect only enough context to define focused tasks.
+3. Delegate non-overlapping implementation tasks to `worker` and read-only research tasks to `scout`.
+4. Require each worker to report files changed, a concise summary, commands/tests run and results, and remaining risks.
+5. Pull isolated worker changes into the parent with `merge_worktrees`. Have `reviewer` check the resulting diff before accepting the work. If anything is incomplete or incorrect, delegate a focused correction and review the corrected diff.
+6. Give the user a concise final summary. Do not claim tests passed unless a worker reported it.
+
+Prefer 2-4 concurrent workers for independent implementation tasks. Do not manufacture parallel work for a small or dependent task. Keep delegation prompts specific and avoid dumping large logs or files into your context.
