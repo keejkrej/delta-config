@@ -1,0 +1,25 @@
+{
+  "servers": {
+    "paper": {
+      "type": "local",
+      "command": ["paper", "mcp"]
+    },
+    "ambient": {
+      "type": "remote",
+      "url": "http://127.0.0.1:8765/mcp",
+      "oauth": false
+    },
+    "mobbin": {
+      "type": "local",
+      "command": ["npx", "-y", "mcp-remote", "https://api.mobbin.com/mcp"]
+    },
+    "browse": {
+      "type": "local",
+      "command": ["browse", "mcp"],
+      "pool": true,
+      "environment": {
+        "OPENCODE_BROWSER_RUNTIME": "auto-update"
+      }
+    }
+  }
+}
