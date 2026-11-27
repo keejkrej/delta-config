@@ -1,15 +1,27 @@
 # Delta config
 
-Apply the provider settings in Delta. Install the personal rules separately.
+Configure the delegation settings and subagent profiles in Delta. Install the personal rules separately.
+
+## Orchestration
+
+The primary agent mirrors OpenCode's `build` agent: it plans, delegates, and verifies without editing files or running shell commands. It delegates implementation to `worker`, research to `scout`, and independent review to `reviewer`.
+
+`scout`'s read-only limit is a prompt restriction, not a sandbox: `scout` has terminal access, but its profile prompt and delegated tasks forbid creating, editing, or deleting files, side-effecting shell commands, tests, builds, and formatters, and limit the terminal to read-only inspection and read-only Git commands.
+
+Set **Settings → Subagents → Delegation** to **Max** so Delta does not require an explicit request before delegating. Keep **Settings → Subagents → Allow Model Overrides** off so a parent turn's per-spawn model choice does not replace the configured profile models; that switch covers the per-spawn case only.
+
+The Vercel AI Gateway defaults are DeepSeek V4.1 Flash for `worker` and `scout` and Kimi K3.1 Pro for `reviewer`, matching `opencode-config`. Provider-specific model choices are preserved and take precedence over those defaults, so an existing ChatGPT Subscription override keeps its own model and not every profile necessarily runs on its gateway default.
+
+Isolated subthreads require an explicit merge into the parent, so [`AGENTS.md`](AGENTS.md) makes the orchestrator pull worker changes before reviewing them.
 
 ## Agent prompt
 
-[`AGENTS.md`](AGENTS.md) carries the same Ambient memory instructions as the sibling configs, plus a review-before-done rule that respects Delta's delegation settings. Install it to make Delta load it in local desktop turns across projects:
+[`AGENTS.md`](AGENTS.md) carries the same Ambient memory instructions as the sibling configs and the orchestration workflow. Install it to make Delta load it in local desktop turns across projects:
 
 - macOS or Linux: `sh ./install.sh`
 - Windows PowerShell: `.\install.ps1`
 
-The installers use the stable Delta rules directory, or `DELTA_CONFIG_DIR` if set. For a dev build, point `DELTA_CONFIG_DIR` at the folder Delta lists in **Settings → Thread → Rules → Personal AGENTS.md** before running the installer. If you already have a rules file, merge the new instructions into the file Delta shows rather than replacing it. Keep **Personal AGENTS.md** enabled and check that Delta shows the expected file path. The Ambient tools also need the [MCP connection](#mcp) below.
+The installers use the stable Delta rules directory, or `DELTA_CONFIG_DIR` if set. For a dev build, point `DELTA_CONFIG_DIR` at the folder Delta lists in **Settings → Thread → Rules → Personal AGENTS.md** before running the installer. If you already have rules from this repository installed, merge the updated orchestration block into that file. Otherwise, merge the prompt into any existing rules rather than replacing them. Keep **Personal AGENTS.md** enabled and check that Delta shows the expected file path. The Ambient tools also need the [MCP connection](#mcp) below.
 
 ## Vercel AI Gateway
 
