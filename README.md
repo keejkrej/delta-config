@@ -10,8 +10,6 @@ The primary agent mirrors OpenCode's `build` agent: it plans, delegates, and ver
 
 Set **Settings → Subagents → Delegation** to **Max** so Delta does not require an explicit request before delegating. Keep **Settings → Subagents → Allow Model Overrides** off so a parent turn's per-spawn model choice does not replace the configured profile models; that switch covers the per-spawn case only.
 
-The Vercel AI Gateway defaults are DeepSeek V4.1 Flash for `worker` and `scout` and Kimi K3.1 Pro for `reviewer`, matching `opencode-config`. Provider-specific model choices are preserved and take precedence over those defaults, so an existing ChatGPT Subscription override keeps its own model and not every profile necessarily runs on its gateway default.
-
 Isolated subthreads require an explicit merge into the parent, so [`AGENTS.md`](AGENTS.md) makes the orchestrator pull worker changes before reviewing them.
 
 ## Agent prompt
@@ -23,13 +21,16 @@ Isolated subthreads require an explicit merge into the parent, so [`AGENTS.md`](
 
 The installers use the stable Delta rules directory, or `DELTA_CONFIG_DIR` if set. For a dev build, point `DELTA_CONFIG_DIR` at the folder Delta lists in **Settings → Thread → Rules → Personal AGENTS.md** before running the installer. If you already have rules from this repository installed, merge the updated orchestration block into that file. Otherwise, merge the prompt into any existing rules rather than replacing them. Keep **Personal AGENTS.md** enabled and check that Delta shows the expected file path. The Ambient tools also need the [MCP connection](#mcp) below.
 
-## Vercel AI Gateway
+## Z.ai Coding Plan
 
-1. In **Settings → LLM Providers**, open **Vercel AI Gateway** if it already exists. Otherwise choose **Add Provider → OpenAI-compatible**.
-2. Use the name and base API URL in [`vercel-ai-gateway.json`](vercel-ai-gateway.json). Set the API mode to **Chat Completions**. The JSON is a reference for the provider fields, not a file to copy into Delta's settings directory.
-3. Enter a [Vercel AI Gateway API key](https://vercel.com/docs/ai-gateway/authentication-and-byok/api-keys) in Delta's **API key** field.
-4. Add the models from the JSON if they aren't already listed. Check each model's ID, context window, and maximum output tokens against the file. Use the Gateway IDs as written, without OpenCode's `vercel/` prefix.
-5. Save, pick a model in the composer, and send a test prompt. To mirror the OpenCode model choices, use Kimi K3.1 Pro for primary work and reviews, and DeepSeek V4.1 Flash for worker tasks.
+[`zai-coding-plan.json`](zai-coding-plan.json) is a reference for the provider fields, mirroring the live Delta configuration. It is not an installer input or a file to copy into Delta's settings directory, and it does not change default models or subagent profiles.
+
+Z.ai limits Coding Plan use to [officially supported tools](https://docs.z.ai/devpack/tool/others), and Delta is not listed. Confirm that Z.ai permits use with Delta before entering a plan API key or sending a test prompt. Authenticated compatibility is untested; this reference does not establish official support.
+
+1. In **Settings → LLM Providers**, open **Z.ai Coding Plan** if it already exists. Otherwise choose **Add Provider → OpenAI-compatible**.
+2. Use the name and base API URL in the JSON. Set the API mode to **Chat Completions** (OpenAI Chat Completions), not Responses or Anthropic Messages.
+3. Follow the [Z.ai Coding Plan quick start](https://docs.z.ai/devpack/quick-start) to obtain the matching Coding Plan API key: **Plan Overview** for a personal plan, or **My Plan** for a team plan. Enter the key in Delta's **API key** field only; never put it in this repository or the reference JSON.
+4. Add the models from the JSON if they aren't already listed. Check each model's ID, context window, and maximum output tokens against the file and the [Models.dev Z.ai Coding Plan listing](https://models.dev/providers/zai-coding-plan/). No reasoning-effort values are specified, matching the live configuration.
 
 ## MCP
 
