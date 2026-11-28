@@ -1,0 +1,30 @@
+{
+  "subagents": {
+    "profiles": {
+      "worker": {
+        "overrides": {
+          "openai-subscribed": {
+            "model": "gpt-6.2-sol",
+            "thinking": "medium"
+          }
+        }
+      },
+      "scout": {
+        "overrides": {
+          "openai-subscribed": {
+            "model": "gpt-6.2-sol",
+            "thinking": "medium"
+          }
+        }
+      },
+      "reviewer": {
+        "overrides": {
+          "openai-subscribed": {
+            "model": "gpt-6.2-astra",
+            "thinking": "medium"
+          }
+        }
+      }
+    }
+  }
+}

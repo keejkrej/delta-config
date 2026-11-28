@@ -10,6 +10,10 @@ The primary agent mirrors OpenCode's `build` agent: it plans, delegates, and ver
 
 Set **Settings → Subagents → Delegation** to **Max** so Delta does not require an explicit request before delegating. Keep **Settings → Subagents → Allow Model Overrides** off so a parent turn's per-spawn model choice does not replace the configured profile models; that switch covers the per-spawn case only.
 
+When moving to another machine with the same Delta account, check the subagent profiles first: profile settings normally sync. If you're using another Delta account or the overrides are missing, sign in to ChatGPT Subscription in Delta and open **Settings → Subagents → Provider Overrides**, then **LLM Providers → ChatGPT Subscription → Model Preferences**. Set `worker` and `scout` to GPT-6.2-Sol and `reviewer` to GPT-6.2-Astra, all with **Medium** thinking.
+
+Alternatively, ask the Delta desktop agent to use `delta_settings` to apply only the three ChatGPT Subscription overrides in [`subagent-overrides.json`](subagent-overrides.json), leaving other profile fields and providers unchanged. The JSON is a reference, not a file to copy into Delta's settings directory.
+
 Isolated subthreads require an explicit merge into the parent, so [`AGENTS.md`](AGENTS.md) makes the orchestrator pull worker changes before reviewing them.
 
 ## Agent prompt
