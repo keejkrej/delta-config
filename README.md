@@ -25,6 +25,16 @@ Isolated subthreads require an explicit merge into the parent, so [`AGENTS.md`](
 
 The installers use the stable Delta rules directory, or `DELTA_CONFIG_DIR` if set. For a dev build, point `DELTA_CONFIG_DIR` at the folder Delta lists in **Settings → Thread → Rules → Personal AGENTS.md** before running the installer. If you already have rules from this repository installed, merge the updated orchestration block into that file. Otherwise, merge the prompt into any existing rules rather than replacing them. Keep **Personal AGENTS.md** enabled and check that Delta shows the expected file path. The Ambient tools also need the [MCP connection](#mcp) below.
 
+## Vercel AI Gateway
+
+[`vercel-ai-gateway.json`](vercel-ai-gateway.json) is a reference for the provider fields. It is not an installer input or a file to copy into Delta's settings directory, and it does not change default models or subagent profiles.
+
+1. In Delta desktop's **Settings → LLM Providers**, open **Vercel AI Gateway** if it already exists. Otherwise choose **Add Provider** to configure a [compatible endpoint](https://delta.dev/docs/agents/models-and-providers#connect-a-compatible-endpoint).
+2. Use the name and base API URL in the JSON. Set **API mode** to [**OpenAI Chat Completions**](https://vercel.com/docs/ai-gateway/sdks-and-apis/openai-chat-completions).
+3. Enter a [Vercel AI Gateway API key](https://vercel.com/docs/ai-gateway/authentication-and-byok/api-keys) in Delta's **API key** field only; never put it in this repository or the reference JSON.
+4. Add the models from the JSON if they aren't already listed. Check each model's **ID**, **Maximum tokens** (context window), and **Maximum output tokens** against the file. Use the Gateway IDs as written, without OpenCode's `vercel/` prefix.
+5. Save the provider, select a model in the composer, and send a test prompt. The historical OpenCode choices were Kimi K3.1 Pro for primary work and reviews, and DeepSeek V4.1 Flash for worker and scout tasks; these are not Delta defaults.
+
 ## Z.ai Coding Plan
 
 [`zai-coding-plan.json`](zai-coding-plan.json) is a reference for the provider fields, mirroring the live Delta configuration. It is not an installer input or a file to copy into Delta's settings directory, and it does not change default models or subagent profiles.
